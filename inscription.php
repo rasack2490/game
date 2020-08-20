@@ -19,9 +19,12 @@
                     if(filter_var($mail, FILTER_VALIDATE_EMAIL)){
 
                         $reqmail = $bdd -> prepare("SELECT * FROM membres WHERE mail = ?");
+                        $reqspeudo = $bdd -> prepare("SELECT * FROM membres WHERE speudo = ?");
                         $reqmail->execute(array($mail));
+                        $reqspeudo->execute(array($speudo));
+                        $speudoexist = $reqspeudo->rowCount();
                         $mailexist = $reqmail->rowCount();
-                        if($mailexist == 0){
+                        if(($mailexist == 0)&& ($speudoexist == 0) ){
 
                             if($mdp == $mdp2){
                           
@@ -38,7 +41,7 @@
                         }
                         else{
 
-                            $erreur = 'Adresse mail deja utiliser';
+                            $erreur = "Le speudo ou l'adresse mail est deja utiliser";
                         }
 
                         
@@ -77,14 +80,48 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
+    <style>
+        h1{
+            font-weight: bold;
+            font-size: 50px;
+            color: orange;
+        }
+        .send{
+            margin: 0 50%;
+        }
+        .container{
+            margin-top: 20%;
+        }
+        body{
+            background-color: gray;
+        }
+        p{
+            font-size: 30px;
+            
+        }
+        .text{
+            font-size: 90px;
+        }
+        form{
+            width: 80%;
+            background-color: white;
+            padding: 3%;
+            border-radius: 3%;
+        }
+        
+    </style>
     
   </head>
   <body>
     <div class="container">
-        <div align="center">
+        <div class="row">
+            <div class="col">
+                <h1 class="text">GAME</h1>
+                <p>pour jouer a nos jeux faudrait bien que vous vous inscriviez pour ne plus manquer nos mise a jour</p>
+            </div>
+            <div class="col">
             <form method="post" action="">
-                <h1>INSCRIPTION</h1> <br> <br>
+                <h1 align="center" >INSCRIPTION</h1> <br> <br>
                 <table>
                     <tr>
                         <td align="right">
@@ -127,14 +164,16 @@
                         </td>
                     </tr>
                 </table> <br>
-                <input type="submit" value="je m'inscris" name="forminscription" >
+                <input type="submit" value="je m'inscris" name="forminscription" class="send" >
             </form>
+            <br> <br>
             <?php
                 if(isset($erreur)){
 
-                    echo '<font color="red">'.$erreur.'</font>';
+                    echo '<font color="orange" size="6px">'.$erreur.'</font>';
                 }
             ?>
+            </div>
         </div>
     </div>
     <!-- Optional JavaScript -->
