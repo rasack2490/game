@@ -1,3 +1,73 @@
+<?php  
+    $bdd = new PDO('mysql:host=localhost; dbname=espace_membre', 'root', '');
+
+    if(isset($_POST['forminscription'])){
+
+        $speudo = htmlspecialchars($_POST['speudo']);
+        $mail = htmlspecialchars($_POST['mail']);
+        $mail2 = htmlspecialchars($_POST['mail2']);
+        $mdp = sha1($_POST['mdp']);
+        $mdp2 = sha1($_POST['mdp2']);
+        
+        if(!empty($_POST['speudo'])&& !empty($_POST['mail'])&& !empty($_POST['mail2'])&& !empty($_POST['mdp'])&& !empty($_POST['mdp2'])){
+
+            $speudolenght = strlen($_POST['speudo']);
+            if($speudolenght <= 255){
+
+                if($mail == $mail2){
+
+                    if(filter_var($mail, FILTER_VALIDATE_EMAIL)){
+
+                        $reqmail = $bdd -> prepare("SELECT * FROM membres WHERE mail = ?");
+                        $reqmail->execute(array($mail));
+                        $mailexist = $reqmail->rowCount();
+                        if($mailexist == 0){
+
+                            if($mdp == $mdp2){
+                          
+                                $insertmbr =$bdd->prepare ("INSERT INTO membres(speudo, mail, motdepasse) VALUES(?, ?, ?)");
+                                $insertmbr->execute(array($speudo, $mail, $mdp));
+                                $_SESSION['comptecree'] = 'Votre ocmpte a bien ete cree';
+                                header('Location: index.php');
+                                
+                            }
+                            else{
+        
+                                $erreur = 'Vos deux mot de passes ne sont pas correct !';
+                            }
+                        }
+                        else{
+
+                            $erreur = 'Adresse mail deja utiliser';
+                        }
+
+                        
+
+                        
+                    }
+                    else{
+
+                        $erreur = "Votre adresse mail n'est pas valide";
+                    }
+                }
+                else{
+
+                    $erreur = 'Vos deux adresses mail ne correspondent pas !';
+                }
+            }
+            else{
+
+                $erreur = 'Votre speudo ne doit pas depasser 255 caracteres';
+            }
+        }
+        else{
+
+            $erreur = 'Tous les champs doivent etre completer';
+        }
+    }
+?>
+
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -21,7 +91,7 @@
                             <label for="speudo" >Speudo :</label>
                         </td>
                         <td>
-                            <input type="text" placeholder="votre speudo" name="speudo"/>
+                            <input type="text" placeholder="votre speudo" name="speudo" <?php if(isset($speudo)){echo $speudo;} ?> />
                         </td>
                     </tr>
                     <tr>
@@ -57,8 +127,14 @@
                         </td>
                     </tr>
                 </table> <br>
-                <input type="submit" value="je m'inscris">
+                <input type="submit" value="je m'inscris" name="forminscription" >
             </form>
+            <?php
+                if(isset($erreur)){
+
+                    echo '<font color="red">'.$erreur.'</font>';
+                }
+            ?>
         </div>
     </div>
     <!-- Optional JavaScript -->
