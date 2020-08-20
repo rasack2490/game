@@ -74,7 +74,7 @@
                         <button type="submit" class="btn btn-warning">Connexion</button> 
                         <a class="comp" href="#">information de compte oublie ?</a>
                         <hr>
-                        <button type="submit" class="btn2 btn-success">creer un compte</button> 
+                        <button href="inscription.php" class="btn2 btn-success">creer un compte</button> 
                     </form>
                 </div>
             </div>
